@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 
+// creates matrix of desired size
 const CreateGameBoard = (height, width) => {
   let matrice = []
   for (let i = 0; i < height; i++) {
@@ -13,69 +14,220 @@ const CreateGameBoard = (height, width) => {
   return matrice
 }
 
+// calculates the new true tiles
+// returns array with at position 0 the updated gameBoard and at position 1 the updated trueTiles
 const RedrawGameBoard = (gameBoard, trueTiles) => {
+  //console.log("______")
+  //console.log("______")
+  //console.log("______")
 
+  // set with scope wide
   let gameBoardWidth = gameBoard[0].length
   let gameBoardHeight = gameBoard.length
 
+  // create variables scope wide
   let leftEdge = false
   let rightEdge = false
   let topEdge = false
   let bottomEdge = false
 
+  // optional to make tile choice more readable
+  // let topLeftTile = []
+  // let topMiddleTile = []
+  // let topRightTile = []
+  // let middleLeftTile = []
+  // let middelMiddleTile = []
+  // let middleRightTile = []
+  // let bottomLeftTile = []
+  // let bottomMiddleTile = []
+  // let bottomRightTile = []
+
+  // create an object to reduce search times
+  // store which tiles have been checked as cache to prevent reruns
   let checkedTiles = {}
+
+
+  // create a new object to return without messing up the old TrueTiles since they are used
+  // object as global variable to reduce deletion time when changes are made to the grid
+  let newTrueTiles = {}
+
+  // create a new return matrix to store the updated tiles since original variable is still used
+  let newGameBoard = CreateGameBoard(gameBoardHeight, gameBoardWidth)
 
   //for each trueTile, run the function for the tiles around it
   //look into storing which tiles have been checked to prevent checking tiles multiple times
   //after checking trueTile should be removed
   Object.values(trueTiles).forEach(array => {
 
-    if (!leftEdge && !topEdge) {
-      // check checkedTiles if tile has been done already
+    // set parameters to determine if tile should be checked
+    leftEdge = (array[1] === 0) ? true : false
+    rightEdge = (array[1] === gameBoardWidth - 1) ? true : false
+    topEdge = (array[0] === 0) ? true : false
+    bottomEdge = (array[0] === gameBoardHeight - 1) ? true : false
 
-      // change gameBoard tiles
-      gameBoard[array[0] - 1][array[1] - 1] = CheckTilesAroundTile(gameBoard, array[0] - 1, array[1] - 1)
-      // add checked tile to list which is checked
-      checkedTiles[`${array[0] - 1}, ${array[1] - 1}`] = [array[0] - 1, array[1] - 1]
+    // topLeftTile = [array[0] - 1, array[1] - 1]
+    // topMiddleTile = []
+    // topRightTile = []
+    // middleLeftTile = []
+    // middelMiddleTile = []
+    // middleRightTile = []
+    // bottomLeftTile = []
+    // bottomMiddleTile = []
+    // bottomRightTile = []
+
+    if (!leftEdge && !topEdge) {
+      //console.log("topleft")
+      // check checkedTiles if tile has been done already
+      if (checkedTiles[`${array[0] - 1}, ${array[1] - 1}`] === undefined) {
+        // change gameBoard tiles
+        if (CheckTilesAroundTile(gameBoard, array[0] - 1, array[1] - 1)) {
+          //console.log("i get true!!!")
+          // set tile to true and update the newTrueTiles
+          newGameBoard[array[0] - 1][array[1] - 1] = true
+          // change newTrueTiles !!! DONT CHANGE THE OLD ONE SINCE THIS ONE IS USED UNTIL THE FUNCTION IS FINISHED
+          // ??? might be that due to the forEach loop the list is pre buffered
+          newTrueTiles[`${array[0] - 1}, ${array[1] - 1}`] = [array[0] - 1, array[1] - 1]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0] - 1][array[1] - 1] = false
+        }
+        // add checked tile to list which is checked
+        checkedTiles[`${array[0] - 1}, ${array[1] - 1}`] = [array[0] - 1, array[1] - 1]
+      }
     }
 
     if (!topEdge) {
-      gameBoard[array[0] - 1][array[1]] = CheckTilesAroundTile(gameBoard, array[0] - 1, array[1])
+      //console.log("topmiddle")
+      if (checkedTiles[`${array[0] - 1}, ${array[1]}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0] - 1, array[1])) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0] - 1][array[1]] = true
+          newTrueTiles[`${array[0] - 1}, ${array[1]}`] = [array[0] - 1, array[1]]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0] - 1][array[1]] = false
+        }
+        checkedTiles[`${array[0] - 1}, ${array[1]}`] = [array[0] - 1, array[1]]
+      }
     }
 
     if (!rightEdge && !topEdge) {
-      gameBoard[array[0] - 1][array[1] + 1] = CheckTilesAroundTile(gameBoard, array[0] - 1, array[1] + 1)
+      //console.log("topright")
+      if (checkedTiles[`${array[0] - 1}, ${array[1] + 1}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0] - 1, array[1] + 1)) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0] - 1][array[1] + 1] = true
+          newTrueTiles[`${array[0] - 1}, ${array[1] + 1}`] = [array[0] - 1, array[1] + 1]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0] - 1][array[1] + 1] = false
+        }
+        checkedTiles[`${array[0] - 1}, ${array[1] + 1}`] = [array[0] - 1, array[1] + 1]
+      }
     }
 
     if (!leftEdge) {
-      gameBoard[array[0]][array[1] - 1] = CheckTilesAroundTile(gameBoard, array[0], array[1] - 1)
+      //console.log("middleleft")
+      if (checkedTiles[`${array[0]}, ${array[1] - 1}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0], array[1] - 1)) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0]][array[1] - 1] = true
+          newTrueTiles[`${array[0]}, ${array[1] - 1}`] = [array[0], array[1] - 1]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0]][array[1] - 1] = false
+        }
+        checkedTiles[`${array[0]}, ${array[1] - 1}`] = [array[0], array[1] - 1]
+      }
     }
 
-    gameBoard[array[0]][array[1]] = CheckTilesAroundTile(gameBoard, array[0], array[1])
+    if (checkedTiles[`${array[0]}, ${array[1]}`] === undefined) {
+      //console.log("middlemiddle")
+      if (CheckTilesAroundTile(gameBoard, array[0], array[1])) {
+        //console.log("i get true!!!")
+        newGameBoard[array[0]][array[1]] = true
+        newTrueTiles[`${array[0]}, ${array[1]}`] = [array[0], array[1]]
+      }
+      else {
+        //console.log("i get false!!!")
+        newGameBoard[array[0]][array[1]] = false
+      }
+      checkedTiles[`${array[0]}, ${array[1]}`] = [array[0], array[1]]
+    }
 
     if (!rightEdge) {
-      gameBoard[array[0]][array[1] + 1] = CheckTilesAroundTile(gameBoard, array[0], array[1] + 1)
+      //console.log("middleright")
+      if (checkedTiles[`${array[0]}, ${array[1] + 1}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0], array[1] + 1)) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0]][array[1] + 1] = true
+          newTrueTiles[`${array[0]}, ${array[1] + 1}`] = [array[0], array[1] + 1]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0]][array[1] + 1] = false
+        }
+        checkedTiles[`${array[0]}, ${array[1] + 1}`] = [array[0], array[1] + 1]
+      }
     }
 
     if (!leftEdge && !bottomEdge) {
-      gameBoard[array[0] - 1][array[1] - 1] = CheckTilesAroundTile(gameBoard, array[0] + 1, array[1] + 1)
+      //console.log("bottomleft")
+      if (checkedTiles[`${array[0] + 1}, ${array[1] - 1}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0] + 1, array[1] - 1)) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0] + 1][array[1] - 1] = true
+          newTrueTiles[`${array[0] + 1}, ${array[1] - 1}`] = [array[0] + 1, array[1] - 1]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0] + 1][array[1] - 1] = false
+        }
+        checkedTiles[`${array[0] + 1}, ${array[1] - 1}`] = [array[0] + 1, array[1] - 1]
+      }
     }
 
     if (!bottomEdge) {
-      gameBoard[array[0] + 1][array[1]] = CheckTilesAroundTile(gameBoard, array[0] + 1, array[1] - 1)
+      //console.log("bottommiddle")
+      if (checkedTiles[`${array[0] + 1}, ${array[1]}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0] + 1, array[1])) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0] + 1][array[1]] = true
+          newTrueTiles[`${array[0] + 1}, ${array[1]}`] = [array[0] + 1, array[1]]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0] + 1][array[1]] = false
+        }
+        checkedTiles[`${array[0] + 1}, ${array[1]}`] = [array[0] + 1, array[1]]
+      }
     }
 
     if (!rightEdge && !bottomEdge) {
-      gameBoard[array[0] + 1][array[1] + 1] = CheckTilesAroundTile(gameBoard, array[0] + 1, array[1])
+      //console.log("bottomright")
+      if (checkedTiles[`${array[0] + 1}, ${array[1] + 1}`] === undefined) {
+        if (CheckTilesAroundTile(gameBoard, array[0] + 1, array[1] + 1)) {
+          //console.log("i get true!!!")
+          newGameBoard[array[0] + 1][array[1] + 1] = true
+          newTrueTiles[`${array[0] + 1}, ${array[1] + 1}`] = [array[0] + 1, array[1] + 1]
+        }
+        else {
+          //console.log("i get false!!!")
+          newGameBoard[array[0] + 1][array[1] + 1] = false
+        }
+        checkedTiles[`${array[0] + 1}, ${array[1] + 1}`] = [array[0] + 1, array[1] + 1]
+      }
     }
-    console.log(array)
-    console.log("yush")
-    console.log(leftEdge, rightEdge, topEdge, bottomEdge)
   })
 
-  return gameBoard
+  return [newGameBoard, newTrueTiles]
 }
 
+// checks tiles around tile and returns true or false, indicating if tile should be alive or death next frame
 const CheckTilesAroundTile = (gameBoard, i, j) => {
   // make checking if the edge is reached easier
   let gameBoardWidth = gameBoard[0].length
@@ -141,23 +293,35 @@ const CheckTilesAroundTile = (gameBoard, i, j) => {
     }
   }
 
+  //console.log("I RAN")
+  //console.log("________")
   // after taking count of tiles around that are turned on determine if tile should be true or false
   if (currentTile) {
-    if (2 <= trueTileCount <= 3) {
+    if (2 === trueTileCount || trueTileCount === 3) {
+      //console.log("ran line 216")
+      //console.log(trueTileCount, "trueTileCount")
+      //console.log(2 === trueTileCount || trueTileCount === 3)
       return true
     }
 
     else {
+      //console.log("ran line 222")
+      //console.log(trueTileCount, "trueTileCount")
       return false
     }
   }
 
   if (!currentTile) {
-    if (trueTileCount === 2) {
+    if (trueTileCount === 3) {
+      //console.log("ran line 231")
+      //console.log(trueTileCount, "trueTileCount")
+      //console.log(trueTileCount === 3)
       return true
     }
 
     else {
+      //console.log("ran line 237")
+      //console.log(trueTileCount, "trueTileCount")
       return false
     }
   }
@@ -165,28 +329,35 @@ const CheckTilesAroundTile = (gameBoard, i, j) => {
 
 }
 
-const trueTiles = {
+// creates object to store only the tiles which are true, this prevents looping over entire matrix
+// an object has lower look up times, thus deletion is faster
+let trueTiles = {
 
 }
 
-function App() {
-  const [, setState] = useState()
-  const [gameBoard, setGameBoard] = useState(CreateGameBoard(10, 10))
+// creates gameBoard, this needs to be changed to allow user to input the gameBoard size
+let gameBoard = CreateGameBoard(30, 70)
 
-  RedrawGameBoard(gameBoard, trueTiles)
-  console.log(trueTiles)
+function App() {
+
+  // allows the page to refresh
+  // optimally this would be changed to a useState or custom hook
+  const [, setState] = useState()
 
   return (
     <div className="App">
       <p>GameBoard</p>
       <div style={inlineStyles.gameBoard}>
+        {/* goes trough gameboard and renders the tiles needed, presumably the slowest part of the app */}
         {gameBoard.map((row, i) => {
           return (
             <div key={i} style={inlineStyles.gameRow}>
               {row.map((tile, j) => {
                 return (
+                  // determine if tile should be gray or white
                   tile ? (
                     <div key={j} style={inlineStyles.trueTile} onClick={e => {
+                      // update both the array of the gameboard and the tiles that are true
                       gameBoard[i][j] = false
                       delete trueTiles[`${i}${j}`]
                       setState({})
@@ -204,6 +375,15 @@ function App() {
           )
         })}
       </div>
+      <button onClick={e => {
+        let returnedArray = RedrawGameBoard(gameBoard, trueTiles)
+        //console.log(trueTiles, gameBoard)
+        gameBoard = returnedArray[0]
+        trueTiles = returnedArray[1]
+        //console.log(trueTiles, gameBoard)
+        setState({})
+        //console.log("i ran")
+      }}>Reload Gameboard</button>
     </div>
   );
 }
