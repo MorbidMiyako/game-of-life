@@ -28,6 +28,32 @@
   color: #61dafb;
 }
 
+.gameBoard {
+  text-align     : center;
+  display        : flex;
+  flex-direction : column;
+  justify-content: center;
+  margin         : auto;
+}
+
+.gameRow {
+  display        : flex;
+  flex-direction : row;
+  justify-content: center;
+}
+
+.trueTile {
+  padding         : 6px;
+  border          : 1px black solid;
+  background-color: white;
+}
+
+.falseTile {
+  padding         : 6px;
+  border          : 1px black solid;
+  background-color: gray;
+}
+
 .hidden {
   display: none;
 }
