@@ -1,31 +1,32 @@
-.App {
-  text-align: center;
+@import url(//db.onlinewebfonts.com/c/7bc71114a54a06cbaf716a3264b70bd6?family=Arcade+Classic);
+
+@font-face {
+  font-family: "Arcade Classic";
+  src        : url("//db.onlinewebfonts.com/t/7bc71114a54a06cbaf716a3264b70bd6.eot");
+  src        : url("//db.onlinewebfonts.com/t/7bc71114a54a06cbaf716a3264b70bd6.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/7bc71114a54a06cbaf716a3264b70bd6.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/7bc71114a54a06cbaf716a3264b70bd6.woff") format("woff"), url("//db.onlinewebfonts.com/t/7bc71114a54a06cbaf716a3264b70bd6.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/7bc71114a54a06cbaf716a3264b70bd6.svg#Arcade Classic") format("svg");
 }
 
-.App-logo {
-  height        : 40vmin;
-  pointer-events: none;
+p,
+button,
+input,
+li {
+  font-family     : "Arcade Classic";
+  color           : #8bac0f;
+  background-color: #0f380f;
+  font-size       : 1.1em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  background     : url("https://i.pinimg.com/originals/2e/b9/25/2eb9259ab41657a199ccce95aa692ce0.gif");
+  background-size: cover;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height      : 100vh;
-  display         : flex;
-  flex-direction  : column;
-  align-items     : center;
-  justify-content : center;
-  font-size       : calc(10px + 2vmin);
-  color           : white;
-}
-
-.App-link {
-  color: #61dafb;
+.title {
+  font-family: "Arcade Classic";
+  color      : #306230;
+  font-size  : 5em;
+  text-align : center;
+  margin     : 0.1em auto 0em;
 }
 
 .gameBoard {
@@ -33,7 +34,6 @@
   display        : flex;
   flex-direction : column;
   justify-content: center;
-  margin         : auto;
 }
 
 .gameRow {
@@ -43,27 +43,112 @@
 }
 
 .trueTile {
-  padding         : 6px;
-  border          : 1px black solid;
-  background-color: white;
+  padding         : .38em;
+  border          : 0.065em #306230 solid;
+  background-color: #8bac0f;
 }
 
 .falseTile {
-  padding         : 6px;
-  border          : 1px black solid;
-  background-color: gray;
+  padding         : .38em;
+  border          : 0.065em #306230 solid;
+  background-color: #0f380f;
 }
 
 .hidden {
   display: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+#generationCount {
+  width     : 18em;
+  text-align: center;
+  padding   : 0.3em 0;
+  margin    : 0.3em auto;
+  border    : 0.1em #306230 solid;
+}
 
-  to {
-    transform: rotate(360deg);
-  }
+button,
+input {
+  border-color: #306230;
+}
+
+button {
+  margin: 0 0.2em 0.2em
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border-color           : #306230;
+  -webkit-text-fill-color: #8bac0f;
+  box-shadow             : #0f380f;
+  font-family            : "Arcade Classic";
+  -webkit-box-shadow     : 0 0 0px 1000px #0f380f inset;
+  transition             : background-color 5000s ease-in-out 0s;
+}
+
+#bgcolour {
+  width : 15em;
+  margin: 0 0.3em 0.3em
+}
+
+#fgcolour {
+  width : 13.3em;
+  margin: 0 0.3em 0.3em
+}
+
+#speed {
+  width : 11.0em;
+  margin: 0 0.3em 0.3em
+}
+
+#dimensions {
+  width : 3.9em;
+  margin: 0 0.3em 0.3em
+}
+
+.infoText {
+  width : 45em;
+  margin: 0 auto;
+}
+
+.textDiv {
+  background: #0f380f;
+}
+
+.textSection {
+  width: 40em;
+}
+
+.infoText h2,
+.infoText h3 {
+  background: #306230
+}
+
+h2 {
+  font-family    : "Arcade Classic";
+  color          : #8bac0f;
+  font-size      : 2em;
+  text-align     : center;
+  margin         : 0.1em auto 0.7em;
+  text-decoration: underline;
+
+}
+
+h3 {
+  font-family: "Arcade Classic";
+  color      : #8bac0f;
+  font-size  : 1.5em;
+  text-align : center;
+  margin     : 0.1em auto 0em;
+
+}
+
+li {
+  padding: 0.1em auto 1em;
 }

@@ -366,127 +366,326 @@ let trueTiles = {
 
 }
 
-let gameBoard = CreateGameBoard(20, 20)
+let gameBoard = CreateGameBoard(50, 50)
 
 let generationCount = 0
 
 let play = false
+let isPlaying = false
+
+let speed = 100
+
+let bgcolour = undefined
+let fgcolour = undefined
 // creates gameBoard, this needs to be changed to allow user to input the gameBoard size
 
-function gameBoardDivCreate() {
+function pageCreate() {
   const generalDiv = document.createElement('div')
 
-  const gameBoardDiv = document.createElement('div')
-  const generationText = document.createElement('p')
+  generalDiv.setAttribute("id", "generalDiv")
 
-  const buttonsDiv = document.createElement('div')
-  const nextStepButton = document.createElement('button')
-  const startButton = document.createElement('button')
-  const stopButton = document.createElement('button')
-  const eraseButton = document.createElement('button')
-  const randomButton = document.createElement('button')
+  function gameBoardDivCreate() {
+    const gameBoardDiv = document.createElement('div')
 
-  const settingsDiv = document.createElement('div')
+    gameBoardDiv.setAttribute("id", "gameBoardDiv")
 
-  gameBoard.forEach((array, i) => {
-    const gameRow = document.createElement('div')
+    gameBoard.forEach((array, i) => {
+      const gameRow = document.createElement('div')
 
-    gameRow.classList.add("gameRow")
+      gameRow.classList.add("gameRow")
 
-    array.forEach((tile, j) => {
-      const gameTileDiv = document.createElement('div')
-      const trueTile = document.createElement('div')
-      const falseTile = document.createElement('div')
+      array.forEach((tile, j) => {
+        const gameTileDiv = document.createElement('div')
+        const trueTile = document.createElement('div')
+        const falseTile = document.createElement('div')
 
-      trueTile.classList.add("hidden")
-      trueTile.classList.add("trueTile")
-      falseTile.classList.add("falseTile")
+        trueTile.classList.add("hidden")
+        trueTile.classList.add("trueTile")
+        falseTile.classList.add("falseTile")
 
-      gameTileDiv.appendChild(trueTile)
-      gameTileDiv.appendChild(falseTile)
+        gameTileDiv.appendChild(trueTile)
+        gameTileDiv.appendChild(falseTile)
 
-      trueTile.setAttribute("id", `T${i},${j}`)
-      falseTile.setAttribute("id", `F${i},${j}`)
+        trueTile.setAttribute("id", `T${i},${j}`)
+        falseTile.setAttribute("id", `F${i},${j}`)
 
-      trueTile.addEventListener('click', () => {
-        generationCount = 0
-        gameBoard[i][j] = false
-        delete trueTiles[`${i}${j}`]
-        trueTile.classList.toggle("hidden")
-        falseTile.classList.toggle("hidden")
-        generationText.textContent = `Current generation: ${generationCount}`
+        trueTile.addEventListener('click', () => {
+          generationCount = 0
+          gameBoard[i][j] = false
+          delete trueTiles[`${i}${j}`]
+          trueTile.classList.toggle("hidden")
+          falseTile.classList.toggle("hidden")
+          document.getElementById("generationCount").textContent = `Current generation: ${generationCount}`
+        })
+
+        falseTile.addEventListener('click', () => {
+          generationCount = 0
+          gameBoard[i][j] = true
+          trueTiles[`${i}${j}`] = [i, j]
+          trueTile.classList.toggle("hidden")
+          falseTile.classList.toggle("hidden")
+          document.getElementById("generationCount").textContent = `Current generation: ${generationCount}`
+        })
+
+        gameRow.appendChild(gameTileDiv)
       })
 
-      falseTile.addEventListener('click', () => {
-        generationCount = 0
-        gameBoard[i][j] = true
-        trueTiles[`${i}${j}`] = [i, j]
-        trueTile.classList.toggle("hidden")
-        falseTile.classList.toggle("hidden")
-        generationText.textContent = `Current generation: ${generationCount}`
-      })
+      gameBoardDiv.appendChild(gameRow)
 
-      gameRow.appendChild(gameTileDiv)
     })
 
-    gameBoardDiv.appendChild(gameRow)
-  })
+    return gameBoardDiv
+  }
 
+  function generationDivCreate() {
+    const generationText = document.createElement('p')
 
-  buttonsDiv.appendChild(generationText)
-  buttonsDiv.appendChild(nextStepButton)
-  buttonsDiv.appendChild(startButton)
-  buttonsDiv.appendChild(stopButton)
-  buttonsDiv.appendChild(eraseButton)
-  buttonsDiv.appendChild(randomButton)
+    generationText.setAttribute("id", "generationCount")
 
-  generationText.setAttribute("id", "generationCount")
-
-  generationText.textContent = `Current generation: ${generationCount}`
-  nextStepButton.textContent = "Next step"
-  startButton.textContent = 'Start'
-  stopButton.textContent = 'Stop'
-  eraseButton.textContent = 'Erase'
-  randomButton.textContent = 'Random Board'
-
-  nextStepButton.addEventListener('click', () => {
-    NextStep()
-  })
-
-  startButton.addEventListener('click', () => {
-    play = setInterval(() => {
-      console.log("hey")
-      NextStep()
-    }, 100)
-  })
-
-  stopButton.addEventListener('click', () => {
-    clearInterval(play)
-  })
-
-  eraseButton.addEventListener('click', () => {
-    gameBoard = CreateGameBoard(gameBoard.length, gameBoard[0].length)
-    // needs to be set to -1 since NextStep updates the textContent after generationCount +=1
-    generationCount = -1
-    NextStep()
-
-  })
-
-  randomButton.addEventListener('click', () => {
-    let returnArray = RandomiseGameBoard(gameBoard)
-    gameBoard = returnArray[0]
-    trueTiles = returnArray[1]
-    generationCount = 0
     generationText.textContent = `Current generation: ${generationCount}`
-  })
 
-  generalDiv.appendChild(buttonsDiv)
-  generalDiv.appendChild(gameBoardDiv)
+    return generationText
+  }
+
+  function buttonsDivCreate() {
+    const buttonsDiv = document.createElement('div')
+
+    buttonsDiv.setAttribute("id", "buttonsDiv")
+
+    const nextStepButton = document.createElement('button')
+    const startButton = document.createElement('button')
+    const stopButton = document.createElement('button')
+    const eraseButton = document.createElement('button')
+    const randomButton = document.createElement('button')
+
+    buttonsDiv.appendChild(nextStepButton)
+    buttonsDiv.appendChild(startButton)
+    buttonsDiv.appendChild(stopButton)
+    buttonsDiv.appendChild(eraseButton)
+    buttonsDiv.appendChild(randomButton)
+    nextStepButton.textContent = "Next step"
+    startButton.textContent = 'Start'
+    stopButton.textContent = 'Stop'
+    eraseButton.textContent = 'Erase'
+    randomButton.textContent = 'Random Board'
+
+    nextStepButton.addEventListener('click', () => {
+      NextStep()
+    })
+
+    startButton.addEventListener('click', () => {
+      if (!isPlaying) {
+        play = setInterval(() => {
+          console.log("hey")
+          NextStep()
+        }, speed)
+      }
+      isPlaying = true
+    })
+
+    stopButton.addEventListener('click', () => {
+      clearInterval(play)
+      isPlaying = false
+    })
+
+    eraseButton.addEventListener('click', () => {
+      gameBoard = CreateGameBoard(gameBoard.length, gameBoard[0].length)
+      // needs to be set to -1 since NextStep updates the textContent after generationCount +=1
+      NextStep()
+
+      generalDiv.removeChild(document.getElementById("gameBoardDiv"))
+
+      generalDiv.insertBefore(gameBoardDivCreate(), document.getElementById("generalDiv").childNodes[0])
+      generationCount = -1
+      NextStep()
+
+    })
+
+    randomButton.addEventListener('click', () => {
+      let returnArray = RandomiseGameBoard(gameBoard)
+      gameBoard = returnArray[0]
+      trueTiles = returnArray[1]
+      generationCount = 0
+      document.getElementById("generationCount").textContent = `Current generation: ${generationCount}`
+    })
+
+    return buttonsDiv
+  }
+
+  function settingsDivCreate() {
+    const settingsDiv = document.createElement('form')
+    const settingBackgroundColourLabel = document.createElement('label')
+    const settingBackgroundColourSelect = document.createElement('input')
+    const settingForegroundColourLabel = document.createElement('label')
+    const settingForegroundColourSelect = document.createElement('input')
+    const settingsBreak = document.createElement("br")
+    const settingSpeedLabel = document.createElement('label')
+    const settingSpeedInput = document.createElement('input')
+    const settingDimensionsLabel = document.createElement('label')
+    const settingDimensionsInput = document.createElement('input')
+    const settingsSubmit = document.createElement('button')
+
+
+    settingsDiv.setAttribute("name", "settingsForm")
+    settingsDiv.setAttribute("id", "settingsDiv")
+
+
+    settingsDiv.appendChild(settingBackgroundColourLabel)
+    settingsDiv.appendChild(settingBackgroundColourSelect)
+
+    settingBackgroundColourLabel.setAttribute("for", "bgcolour")
+
+    settingBackgroundColourSelect.setAttribute("type", "text")
+    settingBackgroundColourSelect.setAttribute("id", "bgcolour")
+    settingBackgroundColourSelect.setAttribute("name", "bgcolour")
+    settingBackgroundColourSelect.setAttribute("placeholder", "Off, #0f380f / green")
+
+
+    settingsDiv.appendChild(settingForegroundColourLabel)
+    settingsDiv.appendChild(settingForegroundColourSelect)
+
+    settingForegroundColourLabel.setAttribute("for", "fgcolour")
+
+    settingForegroundColourSelect.setAttribute("type", "text")
+    settingForegroundColourSelect.setAttribute("id", "fgcolour")
+    settingForegroundColourSelect.setAttribute("name", "fgcolour")
+    settingForegroundColourSelect.setAttribute("placeholder", "On, #8bac0f / pink")
+
+
+    settingsDiv.appendChild(settingsBreak)
+
+
+    settingsDiv.appendChild(settingSpeedLabel)
+    settingsDiv.appendChild(settingSpeedInput)
+
+    settingSpeedInput.setAttribute("for", "speed")
+
+    settingSpeedInput.setAttribute("type", "text")
+    settingSpeedInput.setAttribute("id", "speed")
+    settingSpeedInput.setAttribute("name", "speed")
+    settingSpeedInput.setAttribute("placeholder", "Time in seconds")
+
+
+    settingsDiv.appendChild(settingDimensionsLabel)
+    settingsDiv.appendChild(settingDimensionsInput)
+
+    settingDimensionsLabel.setAttribute("for", "dimensions")
+
+    settingDimensionsInput.setAttribute("type", "text")
+    settingDimensionsInput.setAttribute("id", "dimensions")
+    settingDimensionsInput.setAttribute("name", "dimensions")
+    settingDimensionsInput.setAttribute("placeholder", "50,50")
+
+
+    settingsDiv.appendChild(settingsSubmit)
+
+    settingsSubmit.textContent = "Apply settings"
+    settingsSubmit.addEventListener('click', (e) => {
+      e.preventDefault()
+      let newbgcolour = document.forms["settingsForm"]["bgcolour"].value
+      let newfgcolour = document.forms["settingsForm"]["fgcolour"].value
+      let newSpeed = document.forms["settingsForm"]["speed"].value
+      let dimensions = document.forms["settingsForm"]["dimensions"].value
+
+      dimensions = dimensions.split(",")
+
+      if (!isNaN(dimensions[0]) && !isNaN(dimensions[1])) {
+
+        gameBoard = CreateGameBoard(dimensions[0], dimensions[1])
+
+        generalDiv.removeChild(document.getElementById("gameBoardDiv"))
+
+        generalDiv.insertBefore(gameBoardDivCreate(), document.getElementById("generalDiv").childNodes[0])
+
+        console.log(gameBoard)
+      }
+
+      if (!isNaN(newSpeed) && newSpeed === 0) {
+        speed = newSpeed * 1000
+
+        generalDiv.removeChild(document.getElementById("buttonsDiv"))
+
+        generalDiv.insertBefore(buttonsDivCreate(), document.getElementById("generalDiv").childNodes[2])
+      }
+
+      if (newbgcolour !== "") {
+
+        bgcolour = newbgcolour
+
+        let backgroundElements = document.querySelectorAll(".falseTile")
+
+        backgroundElements.forEach(elementToChange => {
+          console.log(elementToChange)
+          elementToChange.style.backgroundColor = bgcolour
+        })
+      }
+
+      else {
+
+        let backgroundElements = document.querySelectorAll(".falseTile")
+
+        backgroundElements.forEach(elementToChange => {
+          elementToChange.style.backgroundColor = bgcolour
+        })
+      }
+
+      if (newfgcolour !== "") {
+        console.log("ran if statement")
+
+        fgcolour = newfgcolour
+
+        let foregroundElements = document.querySelectorAll(".trueTile")
+
+        foregroundElements.forEach(elementToChange => {
+          elementToChange.style.backgroundColor = fgcolour
+        })
+
+      }
+
+      else {
+
+        fgcolour = newfgcolour
+
+        let foregroundElements = document.querySelectorAll(".trueTile")
+
+        foregroundElements.forEach(elementToChange => {
+          elementToChange.style.backgroundColor = fgcolour
+        })
+
+      }
+
+      document.getElementById("settingsDiv").reset()
+
+      console.log(newbgcolour, newfgcolour, speed, dimensions)
+    })
+
+    return settingsDiv
+  }
+
+  function templatesDivCreate() {
+    const templatesDiv = document.createElement('form')
+    const spaceShipTemplate = document.createElement('button')
+
+    templatesDiv.appendChild(spaceShipTemplate)
+
+    spaceShipTemplate.textContent = "Spaceship"
+
+    return templatesDiv
+  }
+
+  generalDiv.appendChild(gameBoardDivCreate())
+
+  generalDiv.appendChild(generationDivCreate())
+
+  generalDiv.appendChild(buttonsDivCreate())
+
+  generalDiv.appendChild(settingsDivCreate())
+
+  generalDiv.appendChild(templatesDivCreate())
+
 
   return generalDiv
 }
 
 const upperGameBoardDiv = document.querySelector(".gameBoard")
-upperGameBoardDiv.appendChild(gameBoardDivCreate())
-
-
+upperGameBoardDiv.appendChild(pageCreate())
